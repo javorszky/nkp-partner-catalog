@@ -14,24 +14,43 @@ function normalizeBaseUrl(value) {
   return withLeading.endsWith('/') ? withLeading : `${withLeading}/`;
 }
 
+function loadDocsBundle() {
+  try {
+    return {
+      portal: require('./src/data/portal-version.json'),
+      site: require('./src/data/site-config.json'),
+      catalogs: require('./src/data/catalogs.json'),
+    };
+  } catch {
+    // Before first `_docs-prepare`: read human config.
+    const cfg = require('../scripts/docs-config.cjs');
+    const raw = cfg.loadConfigYaml();
+    return {
+      portal: cfg.portalFromConfig(raw),
+      site: cfg.siteFromConfig(raw),
+      catalogs: cfg.catalogsFromConfig(raw).list,
+    };
+  }
+}
+
 const baseUrl = normalizeBaseUrl();
+const {portal, site, catalogs} = loadDocsBundle();
 
 /** @type {import('@docusaurus/types').Config} */
 const config = {
-  title: 'NKP Catalog',
-  tagline: 'Documentation for NKP Catalog',
+  title: site.title,
+  tagline: site.tagline,
 
   // Set BASE_URL to match where the site is served (e.g. / or /nkp-partner-catalog/).
   // All internal links are baseUrl-relative; no content changes needed when baseUrl changes.
-  url: process.env.SITE_URL ?? 'https://nutanix-cloud-native.github.io',
+  url: process.env.SITE_URL ?? site.siteUrl,
   baseUrl,
-  organizationName: 'nutanix-cloud-native',
-  projectName: 'nkp-partner-catalog',
+  organizationName: site.organization,
+  projectName: site.project,
 
   customFields: {
-    nkpVersion: '2.17',
-    nkpDocsBaseUrl:
-      'https://portal.nutanix.com/page/documents/details?targetId=Nutanix-Kubernetes-Platform-v2_17',
+    nkpVersion: portal.nkpVersion,
+    nkpDocsBaseUrl: portal.nkpDocsBaseUrl,
   },
 
   favicon: 'img/nutanix-logo.svg',
@@ -56,7 +75,17 @@ const config = {
         docs: {
           path: path.resolve(__dirname, '..', 'source'),
           sidebarPath: './config/sidebars.js',
-          editUrl: 'https://github.com/nutanix-cloud-native/nkp-partner-catalog/tree/main/docs/source/',
+          editUrl: ({docPath}) => {
+            // Generated catalog pages — no meaningful source file in this repo.
+            if (docPath.startsWith('applications/')) {
+              return undefined;
+            }
+            // Generated per-version nkp help dumps.
+            if (/^cli\/\d+\.\d+/.test(docPath)) {
+              return undefined;
+            }
+            return `${site.githubRepo}/${site.editPath}/${docPath}`;
+          },
           lastVersion: 'current',
           versions: {
             current: {
@@ -68,7 +97,7 @@ const config = {
         },
         blog: false,
         theme: {
-          customCss: './src/css/custom.css',
+          customCss: ['./src/css/custom.css', './src/css/catalog.css'],
         },
       }),
     ],
@@ -92,7 +121,7 @@ const config = {
 
   clientModules: [
     require.resolve('./src/clientModules/mermaidPanZoom.js'),
-    require.resolve('./src/clientModules/internalPages.js'),
+    require.resolve('./src/clientModules/devMode.js'),
   ],
 
   themeConfig:
@@ -100,11 +129,11 @@ const config = {
     ({
       docs: {
         sidebar: {
-          autoCollapseCategories: true,
+          autoCollapseCategories: false,
         },
       },
       navbar: {
-        title: 'NKP Catalog',
+        title: site.title,
         style: 'dark',
         logo: {
           alt: 'Nutanix Kubernetes Platform - NKP',
@@ -112,22 +141,20 @@ const config = {
         },
         items: [
           {
-            type: 'docSidebar',
-            sidebarId: 'tutorialSidebar',
+            to: '/docs/applications/',
+            label: 'Applications',
             position: 'left',
-            label: 'Documentation',
+            activeBaseRegex: '/docs/applications(/|$)',
           },
           {
-            type: 'dropdown',
-            label: 'v1',
+            to: '/docs/',
+            label: 'Docs',
             position: 'left',
-            items: [
-              { label: 'v1 (current)', to: '/docs' },
-            ],
+            // Active on docs pages, but not on the Applications surface.
+            activeBaseRegex: '/docs(?:/?$|/(?!applications(?:/|$)))',
           },
           {
-            href: 'https://github.com/nutanix-cloud-native/nkp-partner-catalog',
-            label: 'GitHub',
+            type: 'custom-export',
             position: 'right',
           },
         ],
@@ -136,26 +163,26 @@ const config = {
         style: 'dark',
         links: [
           {
-            title: 'Documentation',
+            title: 'Docs',
             items: [
+              { label: 'Applications', to: '/docs/applications/' },
               { label: 'Getting started', to: '/docs/getting-started/creating-nkp-cluster' },
-              { label: 'Workflows', to: '/docs/workflows/initialize-catalog-repo' },
-              { label: 'CLI Reference', to: '/docs/cli' },
+              { label: 'Guides', to: '/docs/workflows/initialize-catalog-repo' },
+              { label: 'CLI', to: '/docs/cli' },
             ],
           },
           {
             title: 'Catalogs',
-            items: [
-              { label: 'Nutanix Product Catalog', href: 'https://github.com/nutanix-cloud-native/nkp-nutanix-product-catalog' },
-              { label: 'Partner Catalog', href: 'https://github.com/nutanix-cloud-native/nkp-partner-catalog' },
-              { label: 'AI Applications Catalog', href: 'https://github.com/nutanix-cloud-native/nkp-ai-applications-catalog' },
-            ],
+            items: catalogs.map((c) => ({
+              label: c.name,
+              href: c.repo,
+            })),
           },
           {
             title: 'Community',
             items: [
-              { label: 'GitHub', href: 'https://github.com/nutanix-cloud-native/nkp-partner-catalog' },
-              { label: 'Nutanix Portal', href: 'https://portal.nutanix.com' },
+              { label: 'GitHub', href: site.githubRepo },
+              { label: 'Nutanix Portal', href: site.portalHomeUrl },
             ],
           },
         ],
