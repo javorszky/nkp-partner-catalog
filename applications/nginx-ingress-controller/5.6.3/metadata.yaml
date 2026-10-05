@@ -82,6 +82,34 @@ overview: |-
 
   ### Quick-Start Script for Security & Infrastructure Teams
 
+  #### Using nkp cli
+
+  On a workstation with internet access, clone the partner catalog repository first.
+
+  ```shell
+  # 1. Clone the partner catalog repository
+  git clone git@github.com:nutanix-cloud-native/nkp-partner-catalog.git
+  ```
+
+  Next, edit the `applications/nginx-ingress-controller/5.6.3/extra-images.txt` file to include any additional images required for the air-gapped deployment, then build the airgapped bundle with the following command:
+
+  ```shell
+  # 2. Build an air-gapped bundle
+  nkp create catalog-bundle --apps=nginx-ingress-controller=5.6.3 --airgapped
+  ```
+
+  Move the bundle file to the air-gapped environment and load it using the following commands:
+
+  ```shell
+  # 1. Push the bundle to the air-gapped registry
+  nkp push bundle --bundle /path/to/file/nginx-ingress-controller-5.6.3-airgapped.tar --to-registry <your-registry-url>
+
+  # 2. Create the catalog bundle
+  nkp create catalog-application --url oci://<registry-url>/nkp-partner-catalog/nginx-ingress-controller --tag 5.6.3 --workspace kommander-workspace
+  ```
+
+  #### Using docker pull / push
+
   On a workstation with internet access, run the following commands to mirror all required NGINX images to your internal registry:
 
   ```shell
