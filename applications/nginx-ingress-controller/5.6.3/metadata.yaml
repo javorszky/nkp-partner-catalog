@@ -42,7 +42,7 @@ overview: |-
 
   To deploy F5 NGINX Plus or provide custom sensitive values (like registry credentials or JWT license secrets):
 
-  1. Create a Kubernetes Secret named `<releaseName>-custom-values` (or `imagePullSecret`) in your workspace namespace before or during installation:
+  1. Create a Kubernetes Secret named `<releaseName>-custom-values` (or `imagePullSecret`) in your workspace namespace (on the workload cluster(s) where the application will be deployed) before or during installation:
       ```shell
       kubectl create secret docker-registry regcred \
         --docker-server=private-registry.nginx.com \
