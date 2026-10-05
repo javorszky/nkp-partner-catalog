@@ -44,7 +44,7 @@ overview: |-
 
   1. Create a Kubernetes Secret named `<releaseName>-custom-values` (or `imagePullSecret`) in your workspace namespace (on the workload cluster(s) where the application will be deployed) before or during installation:
       ```shell
-      kubectl create secret docker-registry regcred \
+      kubectl create secret docker-registry imagePullSecret \
         --docker-server=private-registry.nginx.com \
         --docker-username=<JWT-TOKEN> \
         --docker-password=none \
@@ -58,7 +58,7 @@ overview: |-
           repository: private-registry.nginx.com/nginx-ic/nginx-plus-ingress
           tag: "5.6.3"
         imagePullSecrets:
-          - name: regcred
+          - name: imagePullSecret
       ```
 
   ## Air-Gapped & Offline Environments
