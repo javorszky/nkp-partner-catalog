@@ -28,7 +28,7 @@ overview: |-
 
   ### Enterprise support and capabilities with F5 NGINX Plus
 
-  If using NGINX Ingress Controller with your F5 NGINX Plusimage and license, you will get access to:
+  If using NGINX Ingress Controller with your F5 NGINX Plus image and license, you will get access to:
 
   - Enterprise level support and hardened releases
   - Advanced JWT and OIDC authentication
