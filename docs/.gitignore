@@ -1,6 +1,9 @@
 # Local docs tooling (devbox run from docs/)
 .devbox/
 
+# UX HTML mockups (not part of the site build)
+.preview/
+
 # Node / Docusaurus
 site/node_modules/
 site/.docusaurus/
@@ -14,10 +17,8 @@ site/static/offline/
 .export-work/
 dist/
 
-# Downloaded nkp CLI binaries + resolved NKP release map
-.cache/nkp-cli/
-.cache/nkp-releases.json
-.cache/bin/
+# Local caches (nkp CLI, releases, helm charts, …)
+.cache
 
 # Generated catalog (just generate-catalog); do not commit
 source/applications/
