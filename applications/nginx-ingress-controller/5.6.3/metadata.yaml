@@ -40,6 +40,8 @@ overview: |-
 
   ## Deploying F5 NGINX Plus & Providing Secrets
 
+  ### Environments which have internet access
+
   To deploy F5 NGINX Plus or provide custom sensitive values (like registry credentials or JWT license secrets):
 
   1. Create a Kubernetes Secret named `<releaseName>-custom-values` (or `imagePullSecret`) in your workspace namespace (on the workload cluster(s) where the application will be deployed) before or during installation:
@@ -61,27 +63,32 @@ overview: |-
           - name: imagePullSecret
       ```
 
+  ### Air-gapped Environments: Quick-Start Script for Security & Infrastructure Teams
 
-  ### Quick-Start Script for Security & Infrastructure Teams
+  If you're deploying the NGINX Ingress Controller in an air-gapped environment, follow the steps below to ensure all necessary images are available locally.
 
-  #### Using nkp cli
+  You will need to use the `nkp` cli.
+
+  #### 1. Clone the partner catalog repository
 
   On a workstation with internet access, clone the partner catalog repository first.
 
   ```shell
-  # 1. Clone the partner catalog repository
   git clone git@github.com:nutanix-cloud-native/nkp-partner-catalog.git
   cd nkp-partner-catalog
   ```
 
-  Next, edit the `applications/nginx-ingress-controller/5.6.3/extra-images.txt` file to include any additional images required for the air-gapped deployment, then build the airgapped bundle with the following command:
+  #### 2. Create the air-gapped bundle
+
+  Next, edit the `applications/nginx-ingress-controller/5.6.3/extra-images.txt` file to include any additional images required for the air-gapped deployment, then build the air-gapped bundle with the following command:
 
   ```shell
-  # 2. Build an air-gapped bundle
   nkp create catalog-bundle --apps=nginx-ingress-controller=5.6.3 --airgapped
   ```
 
-  Move the bundle file to the air-gapped environment and load it using the following commands:
+  #### 3. Move the air-gapped bundle file to your environment
+
+  Move the bundle file to the air-gapped environment and load it using the following commands from within your air-gapped environment.
 
   ```shell
   # 1. Push the bundle to the air-gapped registry
@@ -89,8 +96,6 @@ overview: |-
 
   # 2. Create the catalog bundle
   nkp create catalog-application --url oci://<registry-url>/nkp-partner-catalog/nginx-ingress-controller --tag 5.6.3 --workspace kommander-workspace
-  ```
-
   ```
 
   ## More Information
