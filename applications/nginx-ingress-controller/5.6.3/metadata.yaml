@@ -91,26 +91,6 @@ overview: |-
   nkp create catalog-application --url oci://<registry-url>/nkp-partner-catalog/nginx-ingress-controller --tag 5.6.3 --workspace kommander-workspace
   ```
 
-  #### Using docker pull / push
-
-  On a workstation with internet access, run the following commands to mirror all required NGINX images to your internal registry:
-
-  ```shell
-  export PRIVATE_REGISTRY="harbor.internal.company.com/nginx"
-  export NIC_VERSION="5.6.3"
-
-  # 1. Pull public images
-  docker pull nginx/nginx-ingress:${NIC_VERSION}
-
-  # 2. Tag for internal registry
-  docker tag nginx/nginx-ingress:${NIC_VERSION} ${PRIVATE_REGISTRY}/nginx-ingress:${NIC_VERSION}
-
-  # 3. Save, transfer to air-gapped network, and push
-  docker save ${PRIVATE_REGISTRY}/nginx-ingress:${NIC_VERSION} | gzip > nginx-ingress-${NIC_VERSION}.tar.gz
-
-  # (On air-gapped network)
-  docker load < nginx-ingress-${NIC_VERSION}.tar.gz
-  docker push ${PRIVATE_REGISTRY}/nginx-ingress:${NIC_VERSION}
   ```
 
   ## More Information
