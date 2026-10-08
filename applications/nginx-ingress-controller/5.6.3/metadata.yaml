@@ -61,24 +61,6 @@ overview: |-
           - name: imagePullSecret
       ```
 
-  ## Air-Gapped & Offline Environments
-
-  For highly secure, air-gapped Nutanix environments without public internet access, NGINX Ingress Controller supports two deployment paths:
-
-  ### Path A: Global Registry Mirroring (Recommended - Zero Override)
-
-  If NKP is configured with cluster-wide containerd registry mirroring (e.g., Harbor or internal registry mirroring nginx/nginx-ingress), load the images into your local registry. Containerd automatically intercepts pull requests, so no values.yaml overrides are needed.
-
-  ### Path B: Explicit Image Path Override
-
-  If global registry mirroring is not enabled, update the image repository in your NKP custom overrides:
-
-  ```yaml
-  controller:
-    image:
-      repository: harbor.internal.company.com/nginx/nginx-ingress
-      tag: "5.6.3"
-  ```
 
   ### Quick-Start Script for Security & Infrastructure Teams
 
