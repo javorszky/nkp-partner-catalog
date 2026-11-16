@@ -72,8 +72,8 @@ var _ = Describe("nginx-ingress-controller Tests", Label("nginx-ingress-controll
 
 				for _, cond := range hr.Status.Conditions {
 					// Check for irrecoverable TLS errors to fail immediately rather than waiting 5 minutes
-					if cond.Status == metav1.ConditionFalse &&
-						(strings.Contains(cond.Message, "certificate signed by unknown authority") || strings.Contains(cond.Message, "tls: failed to verify certificate")) {
+					if cond.Status == metav1.ConditionFalse && //nolint:lll
+						(strings.Contains(cond.Message, "certificate signed by unknown authority") || strings.Contains(cond.Message, "tls: failed to verify certificate")) { //nolint:lll
 						return StopTrying(fmt.Sprintf("irrecoverable TLS error: %s", cond.Message))
 					}
 
@@ -145,8 +145,8 @@ var _ = Describe("nginx-ingress-controller Tests", Label("nginx-ingress-controll
 
 				for _, cond := range hr.Status.Conditions {
 					// Check for irrecoverable TLS errors to fail immediately rather than waiting 5 minutes
-					if cond.Status == metav1.ConditionFalse &&
-						(strings.Contains(cond.Message, "certificate signed by unknown authority") || strings.Contains(cond.Message, "tls: failed to verify certificate")) {
+					if cond.Status == metav1.ConditionFalse && //nolint:lll
+						(strings.Contains(cond.Message, "certificate signed by unknown authority") || strings.Contains(cond.Message, "tls: failed to verify certificate")) { //nolint:lll
 						return StopTrying(fmt.Sprintf("irrecoverable TLS error: %s", cond.Message))
 					}
 
@@ -187,8 +187,8 @@ var _ = Describe("nginx-ingress-controller Tests", Label("nginx-ingress-controll
 
 				for _, cond := range hr.Status.Conditions {
 					// Check for irrecoverable TLS errors to fail immediately rather than waiting 5 minutes
-					if cond.Status == metav1.ConditionFalse &&
-						(strings.Contains(cond.Message, "certificate signed by unknown authority") || strings.Contains(cond.Message, "tls: failed to verify certificate")) {
+					if cond.Status == metav1.ConditionFalse && //nolint:lll
+						(strings.Contains(cond.Message, "certificate signed by unknown authority") || strings.Contains(cond.Message, "tls: failed to verify certificate")) { //nolint:lll
 						return StopTrying(fmt.Sprintf("irrecoverable TLS error: %s", cond.Message))
 					}
 
