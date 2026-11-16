@@ -43,7 +43,7 @@ func installGatewayAPICRDs(ctx context.Context) error {
 	if err != nil {
 		return fmt.Errorf("downloading Gateway API CRDs: %w", err)
 	}
-	defer func() { _ = resp.Body.Close() }() //nolint:errcheck
+	defer func() { _ = resp.Body.Close() }()
 
 	if resp.StatusCode != http.StatusOK {
 		return fmt.Errorf("downloading Gateway API CRDs: unexpected status %s", resp.Status)

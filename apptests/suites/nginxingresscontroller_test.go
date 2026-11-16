@@ -16,6 +16,11 @@ import (
 	"github.com/nutanix-cloud-native/nkp-partner-catalog/apptests/catalog"
 )
 
+func isTLSError(msg string) bool {
+	return strings.Contains(msg, "certificate signed by unknown authority") ||
+		strings.Contains(msg, "tls: failed to verify certificate")
+}
+
 var _ = Describe("nginx-ingress-controller Tests", Label("nginx-ingress-controller"), func() {
 	Describe("Installing nginx-ingress-controller", Ordered, Label("install"), func() {
 		var (
@@ -72,8 +77,7 @@ var _ = Describe("nginx-ingress-controller Tests", Label("nginx-ingress-controll
 
 				for _, cond := range hr.Status.Conditions {
 					// Check for irrecoverable TLS errors to fail immediately rather than waiting 5 minutes
-					if cond.Status == metav1.ConditionFalse && //nolint:lll
-						(strings.Contains(cond.Message, "certificate signed by unknown authority") || strings.Contains(cond.Message, "tls: failed to verify certificate")) { //nolint:lll
+					if cond.Status == metav1.ConditionFalse && isTLSError(cond.Message) {
 						return StopTrying(fmt.Sprintf("irrecoverable TLS error: %s", cond.Message))
 					}
 
@@ -145,8 +149,7 @@ var _ = Describe("nginx-ingress-controller Tests", Label("nginx-ingress-controll
 
 				for _, cond := range hr.Status.Conditions {
 					// Check for irrecoverable TLS errors to fail immediately rather than waiting 5 minutes
-					if cond.Status == metav1.ConditionFalse && //nolint:lll
-						(strings.Contains(cond.Message, "certificate signed by unknown authority") || strings.Contains(cond.Message, "tls: failed to verify certificate")) { //nolint:lll
+					if cond.Status == metav1.ConditionFalse && isTLSError(cond.Message) {
 						return StopTrying(fmt.Sprintf("irrecoverable TLS error: %s", cond.Message))
 					}
 
@@ -187,8 +190,7 @@ var _ = Describe("nginx-ingress-controller Tests", Label("nginx-ingress-controll
 
 				for _, cond := range hr.Status.Conditions {
 					// Check for irrecoverable TLS errors to fail immediately rather than waiting 5 minutes
-					if cond.Status == metav1.ConditionFalse && //nolint:lll
-						(strings.Contains(cond.Message, "certificate signed by unknown authority") || strings.Contains(cond.Message, "tls: failed to verify certificate")) { //nolint:lll
+					if cond.Status == metav1.ConditionFalse && isTLSError(cond.Message) {
 						return StopTrying(fmt.Sprintf("irrecoverable TLS error: %s", cond.Message))
 					}
 
