@@ -10,7 +10,7 @@ data:
         tag: "5.7.1"
         pullPolicy: IfNotPresent
       ingressClass:
-        name: nginx
+        name: ${releaseName}
         setAsDefaultIngress: false
       service:
         type: LoadBalancer
