@@ -103,6 +103,13 @@ var _ = Describe("nginx-ingress-controller Tests", Label("nginx-ingress-controll
 				Skip("skipping upgrade test: no previous version available")
 			}
 
+			// The install suite leaves kommanderapptest up when SKIP_CLUSTER_TEARDOWN
+			// is set. Kind refuses to create that cluster a second time.
+			if !useExistingCluster {
+				err := env.Destroy(ctx)
+				Expect(err).ToNot(HaveOccurred())
+			}
+
 			err := SetupKindCluster()
 			Expect(err).ToNot(HaveOccurred())
 
