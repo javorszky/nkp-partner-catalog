@@ -80,7 +80,7 @@ overview: |-
 
     #### 2. Create the air-gapped bundle
 
-    Next, edit the `applications/nginx-ingress-controller/5.7.0/extra_images.txt` file to include any additional images required for the air-gapped deployment, then build the air-gapped bundle with the following command:
+    Next, edit the `applications/nginx-ingress-controller/5.7.0/extra-images.txt` file to include any additional images required for the air-gapped deployment, then build the air-gapped bundle with the following command:
 
     ```shell
     nkp create catalog-bundle --apps=nginx-ingress-controller=5.7.0 --airgapped
