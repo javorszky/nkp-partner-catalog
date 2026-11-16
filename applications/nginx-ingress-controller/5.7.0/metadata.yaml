@@ -98,6 +98,44 @@ overview: |-
     nkp create catalog-application --url oci://<registry-url>/nkp-partner-catalog/nginx-ingress-controller --tag 5.7.0 --workspace kommander-workspace
     ```
 
+    ## Ingress Class and Multiple Instances
+
+    Each instance of NGINX Ingress Controller creates its own IngressClass, named after the application's release name (`<releaseName>`). An instance only handles resources that either name its class or leave the class empty.
+
+    **Option 1: Choose an instance by ingress class (recommended when running more than one instance)**
+
+    Set the class name on each resource you want this instance to handle:
+
+    - Ingress: `spec.ingressClassName: <releaseName>`
+    - VirtualServer: `spec.ingressClassName: <releaseName>`
+    - TransportServer: `spec.ingressClassName: <releaseName>`
+
+    ```yaml
+    apiVersion: k8s.nginx.org/v1
+    kind: VirtualServer
+    metadata:
+      name: cafe
+    spec:
+      ingressClassName: <releaseName>
+      host: cafe.example.com
+      ...
+    ```
+
+    **Option 2: Leave `ingressClassName` empty and split instances by namespace**
+
+    Every instance that watches a namespace handles the resources in it that have no `ingressClassName`. If you leave the field empty, give each instance its own namespaces so that two controllers never handle the same resource:
+
+    ```yaml
+    controller:
+      watchNamespace: "team-a,team-b"   # comma-separated list
+      # or select namespaces by label instead:
+      # watchNamespaceLabel: "nginx-instance=team-a"
+    ```
+
+    `watchNamespace` and `watchNamespaceLabel` cannot be used together.
+
+    > **Note:** If several instances watch the same namespace and resources there have no `ingressClassName`, every one of those instances will handle them. The result is conflicting status updates and duplicate load balancer routing.
+
     ## More Information
 
     - **Documentation:** [NGINX Ingress Controller Documentation](https://docs.nginx.com/nginx-ingress-controller/)
